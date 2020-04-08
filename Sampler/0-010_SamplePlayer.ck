@@ -1,8 +1,8 @@
 public class SamplePlayer extends Chubgraph{
     SndBuf buffer => ADSR fade => outlet;
     buffer.interp(2);
-    5::ms => dur fadeRelease;
-    fade.set(10::ms, 0::ms, 1, fadeRelease);
+    500::ms => dur fadeRelease;
+    fade.set(20::ms, 0::ms, 1, fadeRelease);
     
     1 => int letFinish;
     float refBpm;
@@ -24,8 +24,7 @@ public class SamplePlayer extends Chubgraph{
     //Replace remainingSamps with better solution. sendEnd?
 
     fun void setChan(int i){
-        buffer =< fade;
-        buffer.chan(i) => fade;
+        i => buffer.channel;
     }
 
     fun void copyFrom(SamplePlayer refP){
@@ -96,9 +95,10 @@ public class SamplePlayer extends Chubgraph{
         if(trgtBpm != refBpm)
             trgtBpm / refBpm => buffer.rate;
         
-        spork~ trigStart();
-        if(wait)
+        if(wait){
+            spork~ trigStart();
             start => now;
+        }
         now => debut;
         Math.round(startDur / (1::samp)) $ int=> buffer.pos;
         1 => runningSecu;

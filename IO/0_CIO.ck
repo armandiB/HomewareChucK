@@ -29,24 +29,42 @@ public class CIO{
     for(0 => int i; i < InSize; i++){
       InOffsetVals[i] => InOffsets[i].next;
       InOffsets[i] => In[i];
-      adc.chan(i) => In[i];
+      if(InSize > 1)
+          adc.chan(i) => In[i];
+      else
+          adc => In[i];
     }
     
     for(0 => int i; i < OutSize; i++){
       OutOffsetVals[i] => OutOffsets[i].next;
       OutOffsets[i] => Out[i];
-      Out[i] => dac.chan(i);
+      if(OutSize > 1)
+          Out[i] => dac.chan(i);
+      else
+          Out[i] => dac;
     }
 	
 	1 => OffsetsSet;
   }
+
+fun static void IgnoreIns(int chans[]){
+    for(0 => int i; i < chans.size(); i++){
+        InOffsets[chans[i]] =< In[chans[i]];
+    }
+}
+
+fun static void IgnoreOuts(int chans[]){
+    for(0 => int i; i < chans.size(); i++){
+        OutOffsets[chans[i]] =< Out[chans[i]];
+    }
+}
 
   fun static void ReadFile(string path){
     FileIO fio;
     fio.open(path, FileIO.READ);
 
     if(!fio.good()) {
-          cherr <= "can't open file: " <= path <= " for calibration!" <= IO.newline();
+          <<<"Can't open file:", path, "for calibration!">>>; 
           fio.close();
           return;
     }
@@ -124,7 +142,7 @@ public class CIO{
   }
   
   fun static void Tuning(float f){
-  	SinOsc s => CIO.Out[2];
+  	SinOsc s => dac.chan(0);
   	s.gain(0.25);
   	s.freq(f);
   	while(1) 100::second => now;

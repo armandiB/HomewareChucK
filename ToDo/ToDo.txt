@@ -1,0 +1,12 @@
+ToDo short term:
+Add active int for Preset and correct while in PrimePitchesPreset to stop. Test if p15 needs to run/1::samp/nothing.
+PitchHandler stays longer on harmonics
+gainGesture fade PitchHandler style, and see above
+Real transition beatplayer/stepgeneralout. Need fade out even when no stepgeneralout. See why _launch TypicalPresetTrack ends abruptly.
+Remove (now - xenakeur.startRec) from getParams and computeWaitSamp
+add control fadeRelease SamplePlayer with yield()
+Keep nb of active GOs in preset to know when to done (fadeTrack())
+N exponential variables triggering N events, begin by first one played (min) and then redraw, then 2nd etc. Min(N exps) is exp too. Think about sum as well.
+Better system for out management TypicalPresetTrack
+Make nbIsAlive by section in GazParams
+Initialize particules uniformly depending on volume of section in GazParams

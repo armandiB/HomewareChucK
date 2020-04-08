@@ -10,22 +10,42 @@ public class SineBank extends Chubgraph{
         siz => size;
         new SinOsc[size] @=> oscs;
         new GainGesture[size] @=> gFreqs;
-        new GainGesture[size] @=> gOuts;
+        new GainGesture[size] @=> gGains;
         for(0=> int i; i< size; i++){
-            gOuts[i].multMode();
-            inlet => gFreqs[i] => oscs[i] => gOuts[i] => outlet;
+            gGains[i].multMode();
+            oscs[i].freq(0);
+            gFreqs[i].cvMode(); //could have a mode with chucked input where they are in multMode to change input freq by a certain amount of notes
+            gGains[i].setVal(0);
+            gFreqs[i] => oscs[i] => gGains[i] => outlet;
         }
+        inlet => gFreqs;
     }
-    
+   
+    fun void dinit(int chan){
+      gGains[chan] =< outlet;
+    }
+
     fun void setFreqs(float freqs[]){
         for(0=> int i; i< size; i++)
-            gFreqs.setVal(freqs[i]*refFreq);       
+            gFreqs[i].setVal(freqs[i]*refFreq);       
     }
     
+    fun void setGains(float gn){
+        for(0=> int i; i< size; i++)
+            gGains[i].setVal(refGain*gn);
+    }
+    fun void setGains(int chan, float gn){
+        gGains[chan].setVal(refGain*gn);
+    }
     fun void setGains(float gains[]){
         for(0=> int i; i< size; i++)
-            gGains.setVal(gains[i]*refGain);      
+            gGains[i].setVal(gains[i]*refGain);      
     }
     
+    fun void printFreqs(){
+        for(0=> int i; i< size; i++)
+            <<<oscs[i].freq()>>>;  
+    }
+
     //fade freqs, gains
 }

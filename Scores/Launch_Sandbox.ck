@@ -1,20 +1,23 @@
-MBus.PInit();
+Std.srand(1);
 
-IntArrayList CrecordDac;
-CrecordDac.add(0);CrecordDac.add(2);
-IntArrayList CrecordAdc;
-CrecordAdc.add(0);CrecordAdc.add(1);CrecordAdc.add(2);CrecordAdc.add(3);CrecordAdc.add(4);CrecordAdc.add(5);
+int CrecordDac[0];
+CrecordDac << ParamsM.OscPitchOut << ParamsM.FourierPitchOut << ParamsM.FilterPitchOut << ParamsM.EffectsOut << ParamsM.ClockOut << ParamsM.RunOut << ParamsM.IntensityOut;
+int CrecordAdc[0];
+CrecordAdc << ParamsM.Alt3In << ParamsM.Alt4In << ParamsM.Mic1In << ParamsM.Mic2In << ParamsM.EffectsIn << ParamsM.ReverbIn << ParamsM.ClockIn << ParamsM.JoystickXIn;
 
-//spork ~ Recording.RecordWavDac(CrecordDac, "20190905_H0l0");
-//spork ~ Recording.RecordWavAdc(CrecordAdc, "20190905_H0l0");
-
-Std.srand(2);
+spork ~ Recording.RecordWavDac(CrecordDac, "20191116_RakitClub");
+spork ~ Recording.RecordWavAdc(CrecordAdc, "20191116_RakitClub");
 
 D_S_ Dummy;
 
-35 => Dummy.BPM;
+50 => Dummy.BPM;
 (4./Dummy.BPM) :: minute => ParamsM.BarTime;
 
-spork~ CIO.Tuning(220);
+//spork~ CIO.Tuning(220.0*3/2);
+//spork~ CIO.Tuning(277.183);
+//spork~ CIO.Tuning(246.94);
 
-Dummy.main_0();
+D_S_.main_0();
+//D_S_.main_22();
+
+//IOU.PlayVolts(- 2./12, ParamsM.OscPitchOut);

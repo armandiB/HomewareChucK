@@ -9,6 +9,6 @@ public class SinOut extends Chubgraph{
 	}
 	
 	fun void _fade(SinOut g, dur carDur){
-		freqCtrl.fade(g.freqCtrl.getVal(), carDur);
+		freqCtrl._fade(g.freqCtrl.getVal(), carDur);
 	}
 }

@@ -16,7 +16,7 @@ public class StepOut extends Chubgraph{
         }
     }
     
-    fun void playTrigOnEvent(Event e){
+    fun void _playTrigOnEvent(Event e){
         while(playing){
             e => now;
             spork~ _playTrig();

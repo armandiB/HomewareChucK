@@ -6,6 +6,7 @@ public class SPBundle{
     0 => int isPlaying;
     Event @ beat;
     time timePlayed;
+    Event done;
 	
     fun void fillPlayers(int nbPlayers){
         for(0 => int i; i < nbPlayers ; i++){   
@@ -21,19 +22,21 @@ public class SPBundle{
     }
     fun void setBeat(){
         setBeat(ParamsM.Beat);
-        ParamsM.Beat @=> beat;
     }
     
     fun void setChans(IntArrayList chans, int sid){
         sid => side;
         chans @=> channels;
         for(0 => int i; i < players.size() ; i++){
+            players.get(i) @=> SamplePlayer spi;
+            if(spi == null)
+                continue;
             if(sid == 0)
-                players.get(i) => MBus.PChan0[chans.get(i)];
+                spi => MBus.PChan0[chans.get(i)];
             if(sid == 1)
-                players.get(i) => MBus.PChan1[chans.get(i)];
+                spi => MBus.PChan1[chans.get(i)];
             if(sid == 2)
-                players.get(i) => MBus.PChan2[chans.get(i)];
+                spi => MBus.PChan2[chans.get(i)];
         }
     }
     fun void setChans(int begChan, int sid){
@@ -52,7 +55,15 @@ public class SPBundle{
     
     fun void load(string pre, string files[], string suf, int letFinish){
         for(0 => int i; i < players.size() ; i++){
-            players.get(i).load(pre+files[i]+suf, letFinish);
+            if(files[i] != "null")
+                players.get(i).load(pre+files[i]+suf, letFinish);
+        }
+    }
+    fun void loadAlternate(string pre, string files[], string suf, int letFinish){
+        load(pre, files, suf, letFinish);
+        for(0 => int i; i < players.size() ; i++){
+            if(files[i] != "null")
+                players.get(i).setChan(i%2);
         }
     }
     
@@ -86,29 +97,31 @@ public class SPBundle{
             }
             
             while(isPlaying)
-                100::ms => now;
-                  
-            0 => isPlaying;
+                200::ms => now;
+
+            cut(0);
         }
     }
 	fun void play(){
 		play(1);
 	}
 	
-    fun void cut(){
+    fun void cut(int wait){
         for(0 => int i; i < players.size() ; i++){
             players.get(i).setLoop(0);
             0 => players.get(i).letFinish;
             players.get(i).setLenBeats(0);
             0::samp => players.get(i).minDur;
         }
+        if(wait)
+            beat => now;
         
-        beat => now;
         for(0 => int i; i < players.size() ; i++){
             players.get(i).fade.keyOff();
         }
         
          0 => isPlaying;
+         done.broadcast();
     }
     
     fun void letFinish(int f){

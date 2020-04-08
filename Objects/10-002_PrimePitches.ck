@@ -36,13 +36,16 @@ public class PrimePitches{
 	}
 	
 	fun float applyf12(float p, float q, float a){
-		return multf14(makeFrac(p,q,a));
+		if(Math.random2(0,Math.round(q-p) $ int))
+			return multf12(makeFrac(p,q,a));
+		else
+			return multf12(makeFrac(q,p,a));
 	}
 	fun float applyf14(float p, float q, float a, int multP){
 		if(multP)
 			return multf14(p/makeFrac(p,q,a));
 		else
-			return multf14(p/makeFrac(p,q,a));
+			return multf14(1/makeFrac(p,q,a));
 	}
 	
 	fun static IntArrayList GoodValues(float p, float q){

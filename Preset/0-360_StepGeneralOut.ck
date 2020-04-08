@@ -8,23 +8,28 @@ public class StepGeneralOut extends GeneralOut{
 		"Step" => type;
 	}
     
-    fun void playTrigOnBeatPlayer(BeatPlayer bP){
+    fun void _playTrigOnBeatPlayer(BeatPlayer bP){
         bP @=> bpTrig;
-        gen.playTrigOnEvent(bP.beat);
         "StepTrig" => type;
+        gen._playTrigOnEvent(bP.beat);
+    }
+
+    fun void setPlaying(int i){
+        i => gen.playing;
     }
     
     fun void _fadeTrig(StepGeneralOut go){
         
         //... do nothing, bpTrig should be fading
-        
-        bpTrig.done => now;
-        spork~ gGesture.fade(0, 0::samp);
-		spork~ go.gGesture.fade(1, 0::samp);
+        <<<"start _fadeTrig">>>;
+        bpTrig.done => now;<<<"bpTrig.done">>>;
+        gGesture.setVal(0);
+		go.gGesture.setVal(1);
 		0 => active;
 		1 => go.active;
-		gGesture.done => now;
+        0 => gen.playing;
+        0 => bpTrig.playing;
+        dinit();
         done.broadcast();
-		dinit();
     }
 }

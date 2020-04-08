@@ -19,11 +19,16 @@ public class IOU{
     fun static float FreqToOut(float f){
         return Math.log2(f / ZeroFreq) / OutScaleFactor;
     }
+    fun static float FreqToOut(float f, float tuningFreq){
+        return Math.log2(f / tuningFreq) / OutScaleFactor;
+    }
     
 	fun static StepPlayer PlayVolts(float volts, int channel){
-		IntArrayList channels;
-		channels.add(channel);
-		return PlayVolts(volts, channels);
+        StepPlayer player;    
+        player.step => MBus.PChan0[channel];
+        player.setNext(volts/OutScaleFactor);
+        spork ~ player.playConst();     
+        return player;
 	}
     fun static StepPlayer PlayVolts(float volts, IntArrayList channel){
         StepPlayer player;
@@ -44,16 +49,16 @@ public class IOU{
     }
     
 	fun static void PlayTrig(int channel){
-		IntArrayList channels;
-		channels.add(channel);
-		PlayTrig(channels);
+		StepPlayer player;        
+        player.step => MBus.PChan0[channel];
+        player.playTrig(); //_
 	}
-    fun static void PlayTrig(IntArrayList channel){
+    fun static void PlayTrig(IntArrayList channel){ //_
         StepPlayer player;        
         for (0 => int i; i < channel.size(); i++){
             player.step => MBus.PChan0[channel.get(i)];
         }
-        spork ~ player.playTrig();
+        player.playTrig(); //_
     }
     
 	

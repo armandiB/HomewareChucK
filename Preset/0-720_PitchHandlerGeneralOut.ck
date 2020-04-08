@@ -13,16 +13,24 @@ public class PitchHandlerGeneralOut extends GeneralOut{
 	fun void setFreq(float f, dur carTime){
 		gen.setFreq(f, carTime);
 	}
+
+	fun void setMode(string md){
+		gen.setMode(md);
+	}
 	
 	fun void _fade(PitchHandlerGeneralOut go, dur carDur){
-        //same as SinGeneralOut
-		if(!go.active)
-			go.dinit();
-		
-		gen._fade(go.gen, carDur);
-        
-        carDur => now; //Temporary, would need a done for PitchHandler
-        done.broadcast();
+
+		spork~ gen._fade(go.gen, carDur*3/4);     
+        carDur*3/4 => now; 
+
+		gGesture.link2plexlin(go.gGesture);
+		spork~ go.gGesture._fade(1, carDur/4);
+		0 => active;
+		1 => go.active;
+		gGesture.done => now;
+
+		dinit();
+        done.broadcast();	
 	}
 	
 }

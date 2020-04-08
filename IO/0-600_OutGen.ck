@@ -13,5 +13,4 @@ public class OutGen extends Chugen
             return in;
     }
   
-
 }

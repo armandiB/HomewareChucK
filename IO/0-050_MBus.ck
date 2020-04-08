@@ -13,17 +13,6 @@ public class MBus
         new Gain[pSize] @=> PChan2;
 
         new Gain[pSize] @=> PChan0;
-        
-        for(0 => int i; i < PBusSize; i++)
-            PChan1[i] => CIO.Out[i];
-        
-        for(0 => int i; i < PBusSize; i++){
-            PChan2[i].gain(0);
-            PChan2[i] => CIO.Out[i];
-        }
-		
-		for(0 => int i; i < PBusSize; i++)
-			PChan0[i] => CIO.Out[i];
 	} 
 	fun static void PInit(){
           PInit(CIO.OutSize);
@@ -68,6 +57,13 @@ public class MBus
 		for(0=>int i; i < PBusSize; i++)
 		PChanCF(i, 0, 0, durTot, 100);						
 	}
+     
+    fun static void Tuning(float f){
+        SinOsc s => MBus.PChan0[0];
+        s.gain(0.25);
+        s.freq(f);
+        while(1) 100::second => now;
+    }
         
 	int busSize;
 	Gain @ chan[];

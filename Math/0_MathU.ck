@@ -78,4 +78,40 @@ public class MathU{
 			return 0;
 		return (Math.ceil(a*Math.log(q)/Math.log(p)) - 1) $ int;
 	}
+
+    fun static float BallVolumeCoef(int dim){
+        1 => float result;
+        if(dim%2 == 0){
+            for(1 => int i; i <= dim/2; i++)
+                Math.PI/i *=> result;
+        }
+        else{
+            2 *=> result;
+            for(1 => int i; i <= dim/2; i++)
+                Math.PI*2/(2*i+1) *=> result;
+        }
+        return result;
+    }
+
+    fun static float EuclideanNorm(float vec[]){
+        float sum;
+        for(0 => int i; i < vec.size(); i++)
+            vec[i]*vec[i] +=> sum;
+        
+        return Math.sqrt(sum);
+    }
+
+    fun static int ArgMax(float vec[]){
+        - Math.INFINITY => float max;
+        -1 => int argmax;
+        float temp;
+        for(0 => int i; i < vec.size(); i++){
+            Math.max(max, vec[i]) => temp;
+            if(temp > max){
+                temp => max;
+                i => argmax;
+            }
+        }
+        return argmax;
+    }
 }

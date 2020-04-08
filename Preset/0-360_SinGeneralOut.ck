@@ -15,7 +15,7 @@ public class SinGeneralOut extends GeneralOut{
 		//To remove?
         if(!go.active)
 			go.dinit();
-		
+			
 		gen._fade(go.gen, carDur);
         
         //match phase with chugen if (a.last - b.last)*(a.next - b.next) <= 0 then init and change (need blackhole), or match phases or something

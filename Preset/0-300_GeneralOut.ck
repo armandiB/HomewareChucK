@@ -52,11 +52,13 @@ public class GeneralOut extends Chubgraph{
 	}
 	
 	fun void _fadeIn(dur carDur){
-		gGesture.fade(1, carDur);
+		1 => active;
+		gGesture._fade(1, carDur);
 	}
 	
 	fun void _fadeOut(dur carDur){
-		gGesture.fade(0, carDur);
+		gGesture._fade(0, carDur);
+		0 => active;
 	}
 	
 	fun pure void setGeneral();
@@ -67,12 +69,12 @@ public class GeneralOut extends Chubgraph{
 	}
 	
 	fun void _fade(GeneralOut go, dur carDur){
-		spork~ gGesture.fade(0, carDur);
-		spork~ go.gGesture.fade(1, carDur);
+		spork~ gGesture._fade(0, carDur);
+		spork~ go.gGesture._fade(1, carDur);
 		0 => active;
 		1 => go.active;
 		gGesture.done => now;
-        done.broadcast();
 		dinit();
+        done.broadcast();
 	}
 }

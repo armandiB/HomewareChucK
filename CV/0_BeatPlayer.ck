@@ -4,24 +4,44 @@ public class BeatPlayer{
     0 => int toReset;
     0 => int hardSync;
     Event reset;
-    dur beatTime;
+    1::second => dur beatTime;
     1 => float barSig;
     1 => float multSig;
     Event done;
     
+    dur accError;
+    0 => float jitterFactor;
+    time lastBeat;
+    
     fun void setBeatTime(dur t){
         t => beatTime;
     }
+
+    fun void setBeatTime24(dur t){
+        t/24 => beatTime;
+    }
     
     fun void _playClock(){
+        float rand;
+        float jit;
+        dur jitStep;
         while(playing){
             if(toReset){
                 reset => now;
                 if(!hardSync)
                     0 => toReset;
             }
-            beat.broadcast();
-            beatTime*multSig => now;        
+            beat.broadcast(); now => lastBeat;
+            
+            beatTime*multSig => jitStep;
+            if(jitterFactor != 0){
+                accError/(beatTime*multSig) => float relError;
+                Math.random2f(-1, 1)*jitterFactor + 0.05*relError => rand;
+                Math.exp((rand - relError)*Math.fabs(rand)*0.5-Math.log(jitterFactor)*relError) => jit;
+                (jit-1)*jitStep +=> accError;
+                jit *=> jitStep;
+            }
+            jitStep => now;   
         }
     }
     
@@ -63,9 +83,46 @@ public class BeatPlayer{
         bp.beatTime => beatTime;
         bp.multSig => multSig;
         setReset(bp.beat);
+        me.yield();
+        beat => now;
         beat => now;
         done.broadcast();
     }
     
+    fun void _fadeFollow(BeatPlayer bp, float factor){
+        time bp0;
+        time bp1;
+        float timeRatio;
+        float phaseRatio;
+        bp.beat => now; now => bp0;
+        bp.beat => now; now => bp1;
+        (bp1 - bp0)/(beatTime*multSig) => timeRatio;
+        (bp0 - lastBeat)/(beatTime*multSig) => float bp0Phase;
+        (bp1 - lastBeat)/(beatTime*multSig) => float bp1Phase;
+        if(Math.fabs(bp0Phase) > Math.fabs(bp1Phase))
+            bp1Phase => phaseRatio;
+        else
+            bp0Phase => phaseRatio;
+        while(Math.fabs(timeRatio) > 0.01 && Math.fabs(phaseRatio) < 0.01){
+            bp.beat => now;
+            bp0 => bp1;
+            now => bp0;
+            (bp1 - bp0)/(beatTime*multSig) => timeRatio;
+            (bp0 - lastBeat)/(beatTime*multSig) => float bp0Phase;
+            (bp1 - lastBeat)/(beatTime*multSig) => float bp1Phase;
+            if(Math.fabs(bp0Phase) > Math.fabs(bp1Phase))
+                bp1Phase => phaseRatio;
+            else
+                bp0Phase => phaseRatio;
+             
+            beatTime*(timeRatio + phaseRatio*0.2)*factor +=> beatTime;
+        }
+        bp.beatTime => beatTime;
+        bp.multSig => multSig;
+        setReset(bp.beat);
+        me.yield();
+        beat => now;
+        done.broadcast();
+    }
     
 }

@@ -17,7 +17,7 @@ public class StepPlayer{
     
     fun void playTrig(){
         if(playing){
-            setNext(0.9);
+            setNext(0.8);
             5::ms => now;
             setNext(0);
         }
@@ -35,6 +35,11 @@ public class StepPlayer{
             e => now;
             spork ~ playTrig();
         }
+    }
+
+    fun void playTrigOnOneEvent(Event e){
+        e => now;
+        spork ~ playTrig();
     }
     
     fun float stop(){

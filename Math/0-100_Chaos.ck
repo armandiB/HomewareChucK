@@ -1,35 +1,51 @@
 public class Chaos{
 
-    fun static FloatArrayList LogisticMap(FloatArrayList in, float k){
-        FloatArrayList out;
-        in.get(0) => float x;
-        out.set(0, k*x*(1-x));
-        for(1=>int i; i<in.size(); i++){
-            out.set(i, MathU.Modf(x+in.get(i), 1));
-        }
+    fun static vec3 LogisticMap3(vec3 in, float k){
+        vec3 out;
+        in.x => float x;
+        k*x*(1-x) => out.x;
+        MathU.Modf(x+in.y, 1) => out.y;
+        MathU.Modf(x+in.z, 1) => out.z;
         return out;
     }
-    fun static FloatArrayList LogisticMap(FloatArrayList in){
-        return LogisticMap(in, 4);}
-    
-    fun static FloatArrayList Lorenz(FloatArrayList in, float sigma, float beta, float rho, float step){
-        FloatArrayList out;
-        in.get(0) => float x;
-        in.get(1) => float y;
-        in.get(2) => float z;
-        out.set(0, sigma*(y-x)*step + x);
-        out.set(1, (x*(rho-z) - y)*step + y);
-        out.set(2, (x*y - beta*z)*step + z);
+    fun static complex LogisticMap2(complex in, float k){
+        complex out;
+        in.re => float x;
+        k*x*(1-x) => out.re;
+        MathU.Modf(x+in.im, 1) => out.im;
         return out;
     }
-    fun static FloatArrayList Lorenz(FloatArrayList in, float sigma, float beta, float rho){
-        return Lorenz(in, sigma, beta, rho, 1);}
+    fun static complex LogisticMap2(complex in){
+        return LogisticMap2(in, 4);}
     
+    fun static vec3 Lorenz(vec3 in, float sigma, float beta, float rho, float step){
+        vec3 out;
+        in.x => float x;
+        in.y => float y;
+        in.z => float z;
+        sigma*(y-x)*step + x => out.x;
+        (x*(rho-z) - y)*step + y => out.y;
+        (x*y - beta*z)*step + z => out.z;
+        return out;
+    }
+    fun static vec3 LorenzFunction(vec3 in, float sigma, float beta, float rho){
+        vec3 out;
+        in.x => float x;
+        in.y => float y;
+        in.z => float z;
+        sigma*(y-x) => out.x;
+        x*(rho-z) - y => out.y;
+        x*y - beta*z => out.z;
+        return out;
+    }
+    
+        //rho > 24.74, attractors become repulsors
     fun static ArrayList LorenzCriticalPoints(float sigma, float beta, float rho){
         ArrayList out;
         FloatArrayList one;
-        one.add(0);one.add(0);one.add(0);
-        out.add(one);
+        one.add(0); one.add(0); one.add(0);
+        FloatArrayList stable; stable.add(1);
+        out.add(one); out.add(stable);
         if(beta == 1)
             <<<"Pitchfork Bifurcation">>>;
         if(beta > 1){
@@ -45,11 +61,18 @@ public class Chaos{
             else
                 stable.add(0);
             
-            out.add(two);out.add(three);out.add(stable);
+            out.add(two); out.add(three); out.add(stable);
         }
         return out;
     }
-    
+    fun static void PrintLorenzCriticalPoints(ArrayList res){
+        for(0 => int i; i < res.size(); i++){
+            res.get(i) $ FloatArrayList @=> FloatArrayList l;
+            for(0 => int j; j < l.size(); j++)
+                <<<l.get(j)>>>;
+        }
+    }
+
     fun static complex PolynomialJulia(complex z, int n, complex c, float magLimit){
         if((z $ polar).mag >= magLimit)
             return z;

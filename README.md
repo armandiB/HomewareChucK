@@ -1,5 +1,5 @@
 # HomewareChucK
- ChucK
+ ChucK music programming.
 
 Various explorations of ChucK. Explanations planned for a later date.
 

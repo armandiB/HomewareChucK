@@ -3,4 +3,4 @@
 
 Various explorations of ChucK with a live focus. Documentation planned for a later date.
 
-Examples of previous live performances can be found in Scores/Scores.Backup with the associated live control static class in Sandboxes.
+Examples of previous live performances can be found in Scores/Scores.backup with the associated live control static class in Sandboxes.
